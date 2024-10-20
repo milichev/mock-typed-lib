@@ -1,24 +1,25 @@
 {
   "name": "mock-typed",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A tiny TypeScript library for type-safe function mocks in unit tests",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "cjs/index.js",
+  "types": "cjs/index.d.ts",
   "scripts": {
+    "clean": "rm -rf cjs package.tgz tsconfig.tsbuildinfo",
     "build": "yarn tsc -b",
     "prepack": "yarn clean && yarn build",
     "lint": "eslint 'src/**/*.ts'",
     "test": "vitest"
   },
   "files": [
-    "dist",
+    "cjs",
     "README.md",
     "LICENSE"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./cjs/index.d.ts",
+      "default": "./cjs/index.js"
     },
     "./package.json": "./package.json"
   },

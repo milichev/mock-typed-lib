@@ -6,5 +6,11 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "clean": "(find . -name \\*.tgz -delete) && (find . -name tsconfig.tsbuildinfo -delete) && (find . -type d -name 'cjs' -exec rm -rf \\{\\} +)",
+    "build": "yarn workspaces foreach -Apt run build",
+    "prepack": "yarn clean && yarn build",
+    "pack": "yarn workspaces foreach -Apt run pack"
+  },
   "packageManager": "yarn@4.5.0"
 }
