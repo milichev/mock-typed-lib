@@ -30,13 +30,37 @@ describe("mock", () => {
     });
 
     it("should set the return value", () => {
-      const obj = { fn: () => ({ a: 1 }) } as const;
+      const obj = {
+        fn: ({ name }: { name: string }) => ({ name, a: 1 }),
+      } as const;
       vi.spyOn(obj, "fn");
-      const expected = { a: 1 };
+      const name = "ow";
+      const expected = { a: 1, name };
 
       mock.returnValue(obj.fn, expected);
 
-      expect(obj.fn()).toBe(expected);
+      expect(obj.fn({ name })).toBe(expected);
+    });
+
+    it("should preprocess the value using the prepare option", () => {
+      type Arg = { name: string };
+      const obj = { fn: ({ name }: Arg) => ({ id: 1, name }) };
+
+      vi.spyOn(obj, "fn");
+
+      mock.returnValue(
+        obj.fn,
+        { id: 2, name: "two" },
+        {
+          prepare: (value, arg) => {
+            expect(arg).toEqual({ name: "one" });
+            expect(value).toEqual({ id: 2, name: "two" });
+            return { id: 3, name: "three" };
+          },
+        }
+      );
+
+      expect(obj.fn({ name: "one" })).toEqual({ id: 3, name: "three" });
     });
   });
 
@@ -72,6 +96,30 @@ describe("mock", () => {
 
       expect(obj.fn(1)).toBe(expected);
       expect(obj.fn).toHaveBeenCalledWith(1);
+    });
+
+    it("should preprocess the value using the prepare option", () => {
+      type Arg = { name: string };
+      const obj = { fn: ({ name }: Arg) => ({ id: 1, name }) };
+
+      vi.spyOn(obj, "fn");
+
+      mock.impl(
+        obj.fn,
+        (arg) => {
+          expect(arg).toEqual({ name: "one" });
+          return { id: 2, name: "two" };
+        },
+        {
+          prepare: (value, arg) => {
+            expect(arg).toEqual({ name: "one" });
+            expect(value).toEqual({ id: 2, name: "two" });
+            return { id: 3, name: "three" };
+          },
+        }
+      );
+
+      expect(obj.fn({ name: "one" })).toEqual({ id: 3, name: "three" });
     });
   });
 });

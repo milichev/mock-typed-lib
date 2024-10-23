@@ -34,27 +34,49 @@ export type DeepPartial<T, RetVal extends boolean = false> = T extends Function
       ? (...args: DeepPartial<A, RetVal>) => DeepPartial<R, RetVal>
       : T
     : T
+  : T extends Date
+  ? T
   : T extends object
   ? { [P in keyof T]?: DeepPartial<T[P], RetVal> }
   : T;
 
 export type MockMethods<T extends object> = {
-  [K in keyof T]: T[K] extends (...args: infer A) => infer R ? jest.Mock<R, A> : T[K];
+  [K in keyof T]: Exclude<T[K], undefined> extends (...args: infer A) => infer R
+    ? jest.Mock<R, A>
+    : T[K];
 };
 
+export type MockInput = jest.MockWithArgs<any> | ((...args: any[]) => any);
+
 /** Returns a type the mock is created for. */
-export type MockType<T extends jest.MockWithArgs<any> | ((...args: any[]) => any)> = T extends jest.MockWithArgs<
-  infer V
->
+export type MockType<M extends MockInput> = M extends jest.MockWithArgs<infer V>
   ? V
-  : T extends (...args: any[]) => any
-  ? T
+  : M extends (...args: any[]) => any
+  ? M
   : never;
 
-export type MockReturnType<T extends jest.MockWithArgs<any> | ((...args: any[]) => any)> = T extends jest.MockWithArgs<
+export type MockValueMockedInput<
+  M extends MockInput,
+  RetVal extends boolean = false
+> = MockMethods<DeepPartial<MockReturnType<M>, RetVal>>;
+
+export type MockValueInput<
+  M extends MockInput,
+  RetVal extends boolean = false
+> = DeepPartial<MockReturnType<M>, RetVal> | MockValueMockedInput<M, RetVal>;
+
+export type MockParameters<M extends MockInput> = M extends jest.MockWithArgs<
+  infer V
+>
+  ? Parameters<V>
+  : M extends (...args: infer P) => any
+  ? P
+  : any;
+
+export type MockReturnType<M extends MockInput> = M extends jest.MockWithArgs<
   infer V
 >
   ? ReturnType<V>
-  : T extends (...args: any[]) => infer R
+  : M extends (...args: any[]) => infer R
   ? R
   : any;

@@ -1,8 +1,10 @@
 import type {
   DeepPartial,
+  MockInput,
   MockMethods,
-  MockReturnType,
+  MockParameters,
   MockType,
+  MockValueInput,
 } from "./types";
 
 /**
@@ -23,27 +25,42 @@ export const mock = {
    *
    * @param fn A mock to set return value of.
    * @param value The mock return value which is a deeply partial object. That it is containing only required/sound values.
-   * @param looseFunc The options specifying that the function props args and return values are loose too. Default `false`.
+   * @param looseFunc Specifies that the function props args and return values are loose too. Default `false`.
+   * @param prepare Optional, a function for processing the `value` before returning it from the mock function.
    * @returns The input mock.
    */
   returnValue: <
-    T extends jest.MockWithArgs<any> | ((...args: any[]) => any),
-    V extends DeepPartial<MockReturnType<T>, RetVal>,
-    RetVal extends boolean = false
+    M extends MockInput,
+    V extends MockValueInput<M, RetVal>,
+    RetVal extends boolean = false,
+    Prepared extends MockValueInput<M, RetVal> = V
   >(
-    fn: T,
+    fn: M,
     value: V,
-    { looseFunc: _looseFunc = false as RetVal }: { looseFunc?: RetVal } = {}
+    options: {
+      /** Specifies that the function props args and return values are loose too. Default `false`. */
+      looseFunc?: RetVal;
+      /** Optional, a function for pre-processing the value before returning it from the mock function. */
+      prepare?: (value: V, ...args: MockParameters<M>) => Prepared;
+    } = {}
   ) => {
     if (typeof fn !== "function")
       throw new TypeError("fn expected to be a function");
     const mocked = jest.isMockFunction(fn)
-      ? (fn as MockType<T>)
+      ? (fn as MockType<M>)
       : jest.mocked(fn);
     if (!jest.isMockFunction(mocked))
       throw new TypeError("fn expected to be a mock or mocked function");
+
+    const { prepare } = options;
+    if (prepare) {
+      return mocked.mockImplementation((...args: MockParameters<M>) => {
+        return prepare(value, ...args);
+      }) as jest.Mock<(...args: Parameters<M>) => MockMethods<ReturnType<M>>>;
+    }
+
     return mocked.mockReturnValue(value) as jest.Mock<
-      (...args: Parameters<T>) => MockMethods<ReturnType<T>>
+      (...args: Parameters<M>) => MockMethods<ReturnType<M>>
     >;
   },
 
@@ -54,28 +71,39 @@ export const mock = {
    * @param fn A mock to set return value of.
    * @param impl The mock implementation, which is allowed to return a deeply partial object. That it is containing only required/sound values.
    * @param looseFunc The options specifying that the function props args and return values are loose too. Default `false`.
+   * @param prepare Optional, a function for processing the result of `impl` before returning it from the mock function.
    * @returns The input mock.
    */
   impl: <
-    T extends jest.MockWithArgs<any> | ((...args: any[]) => any),
-    V extends DeepPartial<MockReturnType<T>, RetVal>,
-    RetVal extends boolean = false
+    M extends MockInput,
+    V extends MockValueInput<M, RetVal>,
+    F extends (...args: MockParameters<M>) => V,
+    RetVal extends boolean = false,
+    Prepared extends MockValueInput<M, RetVal> = V
   >(
-    fn: T,
-    impl: () => V,
-    { looseFunc: _looseFunc = false as RetVal }: { looseFunc?: RetVal } = {}
+    fn: M,
+    impl: F,
+    options: {
+      /** Specifies that the function props args and return values are loose too. Default `false`. */
+      looseFunc?: RetVal;
+      /** Optional, a function for pre-processing the value before returning it from the mock function. */
+      prepare?: (value: V, ...args: MockParameters<M>) => Prepared;
+    } = {}
   ) => {
     if (typeof fn !== "function")
       throw new TypeError("fn expected to be a function");
     if (typeof impl !== "function")
       throw new TypeError("impl expected to be a function");
     const mocked = jest.isMockFunction(fn)
-      ? (fn as MockType<T>)
+      ? (fn as MockType<M>)
       : jest.mocked(fn);
     if (!jest.isMockFunction(mocked))
       throw new TypeError("fn expected to be a mock or mocked function");
-    return mocked.mockImplementation(impl) as jest.Mock<
-      (...args: Parameters<T>) => MockMethods<ReturnType<T>>
-    >;
+
+    const { prepare } = options;
+    return mocked.mockImplementation((...args: MockParameters<M>) => {
+      const value = impl(...args);
+      return prepare ? prepare(value, ...args) : value;
+    }) as jest.Mock<(...args: Parameters<M>) => MockMethods<ReturnType<M>>>;
   },
 } as const;
