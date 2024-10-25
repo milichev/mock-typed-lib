@@ -76,9 +76,11 @@ export const mock = {
    */
   impl: <
     M extends MockInput,
-    V extends MockValueInput<M, RetVal>,
-    F extends (...args: MockParameters<M>) => V,
     RetVal extends boolean = false,
+    V extends MockValueInput<M, RetVal> = MockValueInput<M, RetVal>,
+    F extends (...args: MockParameters<M>) => V = (
+      ...args: MockParameters<M>
+    ) => V,
     Prepared extends MockValueInput<M, RetVal> = V
   >(
     fn: M,

@@ -1,3 +1,5 @@
+type Defined<T> = Exclude<T, undefined>;
+
 /**
  * Defines a type representing input type `T` with all properties recursively optional.
  *
@@ -40,9 +42,47 @@ export type DeepPartial<T, RetVal extends boolean = false> = T extends Function
   ? { [P in keyof T]?: DeepPartial<T[P], RetVal> }
   : T;
 
+/**
+ * A map of types that are bypassed in MockMethods.
+ * Each property of the interface has a value of type which are not supposed for method mocking.
+ * The interface can be augmented in other modules to extend the set of skipped types:
+ *
+ * @example
+ * type Entity = {
+ *   call: () => string;
+ * };
+ *
+ * declare module 'mock-typed' {
+ *   export interface NoMethodMockingTypes {
+ *     entity: Entity;
+ *   }
+ * }
+ *
+ * type Context = {
+ *   calc: () => number;
+ *   entity: Entity;
+ * }
+ *
+ * type ContextMock = MockMethods<Context>;
+ * declare const contextMock: ContextMock;
+ * contextMock.alert.mockReturnValue(42); // alert method is mocked
+ * contextMock.entity.call.mockReturnValue('bogus'); // ERROR: call method is not mocked
+ */
+export interface NoMethodMockingTypes {
+  blob: Blob;
+  date: Date;
+  arrayBuffer: ArrayBuffer;
+}
+
+type AllNoMethodMockingTypes = NoMethodMockingTypes[keyof NoMethodMockingTypes];
+
 export type MockMethods<T extends object> = {
-  [K in keyof T]: Exclude<T[K], undefined> extends (...args: infer A) => infer R
+  [K in keyof T]: Defined<T[K]> extends (...args: infer A) => infer R
     ? jest.Mock<R, A>
+    : Defined<T[K]> extends AllNoMethodMockingTypes
+    ? T[K]
+    : Defined<T[K]> extends object
+    ? MockMethods<Defined<T[K]>>
     : T[K];
 };
 

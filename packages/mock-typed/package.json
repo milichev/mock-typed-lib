@@ -1,6 +1,6 @@
 {
   "name": "mock-typed",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A tiny TypeScript library for type-safe function mocks in unit tests",
   "main": "cjs/index.js",
   "types": "cjs/index.d.ts",
@@ -43,8 +43,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@eslint/eslintrc": "^2",
-    "@types/jest": "^29.5.13",
+    "@eslint/eslintrc": "^3",
+    "@types/jest": "^29.5.14",
     "eslint": "^8.45.0",
     "typescript": "^5.6.3",
     "vitest": "^2.1.3"
