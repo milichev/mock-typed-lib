@@ -1,10 +1,23 @@
-# ESLint TypeScript custom rule
-This is an example of an ESLint custom rule written with TypeScript
+# Monorepo for the `mock-typed` library
 
-## How to test it
-- Run `yarn` to install the dependencies
-- Run `yarn workspace eslint-plugin-custom-rule build` to build the custom plugin
-- Run `yarn workspace app lint` to see the errors from the custom rule
+This is a monorepo for the `mock-typed` library used for type safe and convenient mocking in jest and vi unit tests.
 
-## Example with fix
-- Switch to the branch [with-fix](https://github.com/vinassefranche/eslint-typescript-custom-rule/tree/with-fix) on this repository
+## Usage
+
+See the respective usage descriptions:
+
+* `mock-typed` package [README.md](packages/mock-typed/README.md)
+* `eslint-plugin-mock-typed` package [README.md](packages/eslint-plugin-mock-typed/README.md)
+
+## Testing
+
+Run `yarn test` in the respective package.
+
+## Contribution
+
+Add your feature or fix and create a Pull Request.
+
+## Credits
+
+The monorepo structure is inspired by [eslint-typescript-custom-rule](https://github.com/vinassefranche/eslint-typescript-custom-rule) by [Vincent François
+](https://github.com/vinassefranche).

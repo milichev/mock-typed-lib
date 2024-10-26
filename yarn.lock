@@ -1145,7 +1145,8 @@ __metadata:
   dependencies:
     "@typescript-eslint/parser": "npm:^6.1.0"
     eslint: "npm:^8.45.0"
-    eslint-plugin-custom-rule: "workspace:*"
+    eslint-plugin-mock-typed: "workspace:*"
+    mock-typed: "workspace:*"
     typescript: "npm:^5.6.3"
   languageName: unknown
   linkType: soft
@@ -1721,9 +1722,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-custom-rule@workspace:*, eslint-plugin-custom-rule@workspace:packages/eslint-plugin-custom-rule":
+"eslint-plugin-mock-typed@workspace:*, eslint-plugin-mock-typed@workspace:packages/eslint-plugin-mock-typed":
   version: 0.0.0-use.local
-  resolution: "eslint-plugin-custom-rule@workspace:packages/eslint-plugin-custom-rule"
+  resolution: "eslint-plugin-mock-typed@workspace:packages/eslint-plugin-mock-typed"
   dependencies:
     "@typescript-eslint/parser": "npm:^6.1.0"
     "@typescript-eslint/rule-tester": "npm:^6.1.0"
@@ -1743,12 +1744,6 @@ __metadata:
   checksum: 10/37573e8fddf4358b614d274bac7b3029d9a69638e79436f72a58ff0dd595980e1065cea44bce89a8d021bb945d3ebb2d1a96f8c753e779ca0771adba6d9e1763
   languageName: node
   linkType: hard
-
-"eslint-typescript-custom-rule@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "eslint-typescript-custom-rule@workspace:."
-  languageName: unknown
-  linkType: soft
 
 "eslint-visitor-keys@npm:^3.3.0":
   version: 3.4.0
@@ -2694,7 +2689,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mock-typed@workspace:packages/mock-typed":
+"mock-typed-lib@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "mock-typed-lib@workspace:."
+  languageName: unknown
+  linkType: soft
+
+"mock-typed@workspace:*, mock-typed@workspace:packages/mock-typed":
   version: 0.0.0-use.local
   resolution: "mock-typed@workspace:packages/mock-typed"
   dependencies:

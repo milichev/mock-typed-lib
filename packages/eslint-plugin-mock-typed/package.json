@@ -1,6 +1,6 @@
 {
-  "name": "eslint-plugin-custom-rule",
-  "version": "1.0.0",
+  "name": "eslint-plugin-mock-typed",
+  "version": "0.0.5",
   "main": "cjs/index.js",
   "private": true,
   "dependencies": {
