@@ -1,7 +1,7 @@
 {
   "name": "mock-typed-lib",
   "description": "Monorepo for the mock-typed library",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "main": "index.js",
   "license": "MIT",
   "workspaces": [
@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "(find . -name \\*.tgz -delete) && (find . -name tsconfig.tsbuildinfo -delete) && (find . -type d -name 'cjs' -exec rm -rf \\{\\} +)",
     "build": "yarn workspaces foreach -Apt run build",
+    "bump": "yarn workspaces foreach --all exec \"yarn version $VERSION\"",
     "prepack": "yarn clean && yarn build",
     "pack": "yarn workspaces foreach -Apt run pack"
   },
