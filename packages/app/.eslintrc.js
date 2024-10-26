@@ -3,16 +3,16 @@ module.exports = {
     node: true,
     es6: true,
   },
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    extraFileExtensions: ['.ts, .tsx'],
+    extraFileExtensions: [".ts, .tsx"],
   },
   parserOptions: {
-    project: './tsconfig.json',
+    project: "./tsconfig.json",
     tsconfigRootDir: __dirname,
   },
-  plugins: ['custom-rule'],
+  plugins: ["mock-typed"],
   rules: {
-    'custom-rule/my-rule': 'error'
+    "mock-typed/my-rule": "error",
   },
 };
