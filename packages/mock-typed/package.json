@@ -1,6 +1,6 @@
 {
   "name": "mock-typed",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A tiny TypeScript library for type-safe function mocks in unit tests",
   "main": "cjs/index.js",
   "types": "cjs/index.d.ts",
@@ -34,7 +34,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/milichev/mock-typed.git",
+    "url": "https://github.com/milichev/mock-typed-lib.git",
     "directory": "packages/mock-typed"
   },
   "author": {
