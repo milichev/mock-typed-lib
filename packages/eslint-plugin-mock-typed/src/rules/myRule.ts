@@ -2,7 +2,9 @@ import { TSESLint, AST_NODE_TYPES } from "@typescript-eslint/utils";
 
 type MessageIds = "messageIdForSomeFailure" | "messageIdForSomeOtherFailure";
 
-const myRule: TSESLint.RuleModule<MessageIds> = {
+export const name = "my-rule";
+
+export const rule: TSESLint.RuleModule<MessageIds> = {
   defaultOptions: [],
   meta: {
     type: "suggestion",
@@ -35,5 +37,3 @@ const myRule: TSESLint.RuleModule<MessageIds> = {
     },
   }),
 };
-
-export default myRule;
