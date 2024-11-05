@@ -105,6 +105,12 @@ export type MockValueInput<
   RetVal extends boolean = false
 > = DeepPartial<MockReturnType<M>, RetVal> | MockValueMockedInput<M, RetVal>;
 
+export type MockPrepareValue<
+  M extends MockInput,
+  RetVal extends boolean,
+  Result extends MockValueInput<M, RetVal>
+> = Result;
+
 export type MockParameters<M extends MockInput> = M extends jest.MockWithArgs<
   infer V
 >

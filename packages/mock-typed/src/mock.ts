@@ -3,6 +3,7 @@ import type {
   MockInput,
   MockMethods,
   MockParameters,
+  MockPrepareValue,
   MockType,
   MockValueInput,
 } from "./types";
@@ -33,7 +34,12 @@ export const mock = {
     M extends MockInput,
     V extends MockValueInput<M, RetVal>,
     RetVal extends boolean = false,
-    Prepared extends MockValueInput<M, RetVal> = V
+    Result extends MockPrepareValue<M, RetVal, V> = MockPrepareValue<
+      M,
+      RetVal,
+      V
+    >,
+    Prepared extends MockValueInput<M, RetVal> = Result
   >(
     fn: M,
     value: V,
@@ -41,7 +47,7 @@ export const mock = {
       /** Specifies that the function props args and return values are loose too. Default `false`. */
       looseFunc?: RetVal;
       /** Optional, a function for pre-processing the value before returning it from the mock function. */
-      prepare?: (value: V, ...args: MockParameters<M>) => Prepared;
+      prepare?: (value: Result, ...args: MockParameters<M>) => Prepared;
     } = {}
   ) => {
     if (typeof fn !== "function")
@@ -81,7 +87,12 @@ export const mock = {
     F extends (...args: MockParameters<M>) => V = (
       ...args: MockParameters<M>
     ) => V,
-    Prepared extends MockValueInput<M, RetVal> = V
+    Result extends MockPrepareValue<M, RetVal, V> = MockPrepareValue<
+      M,
+      RetVal,
+      V
+    >,
+    Prepared extends MockValueInput<M, RetVal> = Result
   >(
     fn: M,
     impl: F,
@@ -89,7 +100,7 @@ export const mock = {
       /** Specifies that the function props args and return values are loose too. Default `false`. */
       looseFunc?: RetVal;
       /** Optional, a function for pre-processing the value before returning it from the mock function. */
-      prepare?: (value: V, ...args: MockParameters<M>) => Prepared;
+      prepare?: (value: Result, ...args: MockParameters<M>) => Prepared;
     } = {}
   ) => {
     if (typeof fn !== "function")

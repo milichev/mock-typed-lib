@@ -2,6 +2,16 @@
 
 > A tiny TypeScript library for type-safe function mocks in unit tests
 
+- [mock-typed](#mock-typed)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [`mock.returnValue(fn | mock<fn>, value[, options])`](#mockreturnvaluefn--mockfn-value-options)
+    - [`mock.impl(fn | mock<fn>, implementation[, options])`](#mockimplfn--mockfn-implementation-options)
+    - [Advanced Usage](#advanced-usage)
+      - [`prepare` callback](#prepare-callback)
+        - [`MockValueMockedInput` type for value declarations](#mockvaluemockedinput-type-for-value-declarations)
+  - [Contribution](#contribution)
+
 ## Installation
 
 Depending on the used package manager, one of the following:
@@ -126,9 +136,9 @@ expect(result.validate).toHaveBeenCalled();
 result.validate?.mockClear();
 ```
 
-#### Advanced Usage
+### Advanced Usage
 
-##### `prepare` callback
+#### `prepare` callback
 
 **See the example in the test suite ["when testing a demo component using MockValueMockedInput"`](src/mock.spec.ts).**
 
@@ -168,7 +178,7 @@ mock.impl(
 );
 ```
 
-###### `MockValueMockedInput` type for value declarations
+##### `MockValueMockedInput` type for value declarations
 
 The helper type `MockValueMockedInput` provides a simple way to declare type-safe mock objects with jest/vi mock typing:
 
