@@ -4,3 +4,4 @@ cjs
 *.tgz
 *.tsbuildinfo
 !.yarn/releases
+.DS_Store
