@@ -1,5 +1,7 @@
-import * as ts from "typescript";
+import ts from "typescript";
+import { ArrayValues, PackageJson } from "type-fest";
 import type { TSNode } from "@typescript-eslint/typescript-estree";
+import { getFileContentAsObject, tryFindFile } from "./fs-utils";
 
 export function getParentByKind<K extends ts.SyntaxKind>(
   node: ts.Node,
@@ -109,6 +111,7 @@ function collectDeclarations({
   paths,
   exportedName,
   predicate,
+  visited,
 }: {
   node: ts.Node;
   checker: ts.TypeChecker;
@@ -117,8 +120,13 @@ function collectDeclarations({
   paths: string[];
   exportedName?: string;
   predicate?: (decl: ts.Declaration) => boolean;
+  visited?: Set<ts.Node>;
 }) {
-  if ((predicate || exportedName) && decls.length > 0) return;
+  if (visited?.has(node) || ((predicate || exportedName) && decls.length > 0))
+    return;
+
+  if (!visited) visited = new Set();
+  visited.add(node);
 
   if (ts.isSourceFile(node)) {
     paths.unshift(node.fileName);
@@ -130,6 +138,7 @@ function collectDeclarations({
         decls,
         paths,
         exportedName,
+        visited,
         predicate,
       })
     );
@@ -144,6 +153,7 @@ function collectDeclarations({
         decls,
         paths,
         exportedName,
+        visited,
         predicate,
       })
     );
@@ -171,6 +181,7 @@ function collectDeclarations({
           decls,
           paths,
           exportedName,
+          visited,
           predicate,
         })
       );
@@ -192,6 +203,7 @@ function collectDeclarations({
           decls,
           paths,
           exportedName,
+          visited,
           predicate,
         });
     }
@@ -209,6 +221,7 @@ function collectDeclarations({
             decls,
             paths,
             exportedName,
+            visited,
             predicate,
           })
         );
@@ -223,6 +236,7 @@ function collectDeclarations({
         decls,
         paths,
         exportedName,
+        visited,
         predicate,
       });
     }
@@ -234,6 +248,7 @@ function collectDeclarations({
       decls,
       paths,
       exportedName,
+      visited,
       predicate,
     });
   } else if (ts.isImportDeclaration(node)) {
@@ -262,6 +277,7 @@ function collectDeclarations({
         decls,
         paths,
         exportedName,
+        visited,
         predicate,
       });
   }
@@ -296,4 +312,32 @@ export function isTypeReference(type: ts.Type): type is ts.TypeReference {
 
 export function isAnyType(type: ts.Type) {
   return (type.flags & ts.TypeFlags.Any) !== 0;
+}
+
+const notAPackage = Symbol.for("not-a-package.json");
+const packageJsonCache = new Map<string, PackageJson | typeof notAPackage>();
+
+export function getTypePackage(
+  element?: ts.Type | ts.Node
+): PackageJson | undefined {
+  const { fileName } =
+    (element as ts.Type)?.symbol?.declarations?.[0]?.getSourceFile?.() ??
+    (element as ts.Node)?.getSourceFile?.() ??
+    {};
+
+  if (!fileName) return undefined;
+
+  let packageJson = packageJsonCache.get(fileName);
+  if (packageJson === notAPackage) return undefined;
+
+  if (!packageJson) {
+    const packageFilename = tryFindFile("package.json", fileName);
+    if (packageFilename) {
+      packageJson = getFileContentAsObject<PackageJson>(packageFilename);
+      packageJsonCache.set(packageFilename, packageJson ?? notAPackage);
+    }
+    packageJsonCache.set(fileName, packageJson ?? notAPackage);
+  }
+
+  return packageJson;
 }

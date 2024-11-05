@@ -3,7 +3,7 @@
     "sourceMap": true,
     "inlineSources": true,
     "strict": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -17,12 +17,17 @@
     "declaration": true,
     "declarationMap": true,
     "rootDir": "src",
+    "baseUrl": ".",
     "skipLibCheck": true,
     "outDir": "cjs",
     "module": "NodeNext",
     "target": "es6",
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "mock-typed": ["../mock-typed/src/index.ts"]
+    }
   },
+  "references": [{ "path": "../mock-typed" }],
   "include": ["src", "package.json"]
 }

@@ -4,13 +4,12 @@ import { AST_NODE_TYPES } from "@typescript-eslint/typescript-estree";
 import invariant from "tiny-invariant";
 import { createRule } from "./createRule";
 import {
-  findDeclarationsInFile,
-  getDeclarationAtSymbol,
-  getParent,
+  getTypePackage,
   isAnyType,
-  resolveModule,
+  isOneOf,
   resolveTypeReferences,
-} from "../ts-utils";
+} from "../utils";
+import { mockMethods, mockTypePackageName } from "../const";
 
 type MessageIds = "issue:any-mock-value";
 type Options = [];
@@ -37,46 +36,42 @@ export const rule = createRule<Options, MessageIds>({
     const services = ESLintUtils.getParserServices(context);
     const { program } = services;
     const checker = program.getTypeChecker();
-    const mockDeclFile = resolveModule("../mock.ts", __filename, program);
-    if (!mockDeclFile) {
-      console.warn(
-        `[${name}]: Could not resolve "../mock.ts" module. A compilation error may have occurred. Skipping the check...`
-      );
-      return {};
-    }
-
-    const mockDecl = findDeclarationsInFile({
-      file: mockDeclFile,
-      checker,
-      program,
-      exportedName: "mock",
-    })[0] as ts.VariableDeclaration;
-    invariant(mockDecl, "mock declaration expected");
 
     return {
       CallExpression(node: TSESTree.CallExpression) {
+        let methodName: string | undefined;
+
         if (maybeReturnValueFunctionCall(node)) {
-          const identType = checker.getTypeAtLocation(
-            services.esTreeNodeToTSNodeMap.get(node.callee)
-          );
-          const maybeMockDecl = checker
-            .getSignaturesOfType(identType, ts.SignatureKind.Call)
-            .map((sig) =>
-              getParent<ts.VariableDeclaration>(
-                sig.getDeclaration(),
-                ts.isVariableDeclaration
-              )
-            )
-            .filter(Boolean)[0];
-          if (maybeMockDecl !== mockDecl) return;
+          const tsFunc = services.esTreeNodeToTSNodeMap.get(node.callee);
+          const identType = checker.getTypeAtLocation(tsFunc);
+          const [decl] = identType?.symbol?.declarations ?? [];
+
+          const packageName = getTypePackage(decl)?.name;
+          if (packageName !== mockTypePackageName) return;
+
+          methodName =
+            decl &&
+            ts.isArrowFunction(decl) &&
+            ts.isPropertyAssignment(decl.parent)
+              ? decl.parent.name.getText()
+              : undefined;
         } else if (maybeReturnValueMethodCall(node)) {
-          // assert that the method is called on the `mock` var declaration
-          const objSymbol = services.getSymbolAtLocation(node.callee.object);
-          const objTypeDecl =
-            objSymbol &&
-            getDeclarationAtSymbol({ symbol: objSymbol, checker, program });
-          if (objTypeDecl !== mockDecl) return;
+          const tsObj = services.esTreeNodeToTSNodeMap.get(node.callee.object);
+          const objType = checker.getTypeAtLocation(tsObj);
+          if (!objType) return;
+
+          const packageName = getTypePackage(objType)?.name;
+          if (packageName !== mockTypePackageName) return;
+
+          const tsMeth = services.esTreeNodeToTSNodeMap.get(node.callee);
+          methodName = ts.isPropertyAccessExpression(tsMeth)
+            ? tsMeth.name.getText()
+            : undefined;
         }
+
+        if (!isOneOf(methodName, mockMethods)) return;
+
+        if (node.arguments.length !== 2) return;
 
         const [fnArgNode, valArgNode] = node.arguments;
         invariant(fnArgNode, "fn arg expected");
@@ -97,14 +92,34 @@ export const rule = createRule<Options, MessageIds>({
         );
         if (isAnyType(returnType)) return;
 
-        // get type of value (2nd arg of `returnValue`)
         const valTsNode = services.esTreeNodeToTSNodeMap.get(valArgNode);
-        const valType = resolveTypeReferences(
-          checker.getTypeAtLocation(valTsNode),
-          checker
-        );
+        const valTypeNode = checker.getTypeAtLocation(valTsNode);
 
-        if (isAnyType(valType)) {
+        // get type of value (2nd arg of `returnValue` | `impl`)
+        let valType: ts.Type | undefined;
+        switch (methodName) {
+          case "returnValue":
+            valType = resolveTypeReferences(valTypeNode, checker);
+            break;
+
+          case "impl":
+            const fnSignature = checker.getSignaturesOfType(
+              valTypeNode,
+              ts.SignatureKind.Call
+            )[0];
+            if (!fnSignature) return;
+
+            valType = resolveTypeReferences(
+              checker.getReturnTypeOfSignature(fnSignature),
+              checker
+            );
+            break;
+
+          default:
+            return;
+        }
+
+        if (valType && isAnyType(valType)) {
           context.report({
             node: valArgNode,
             messageId: "issue:any-mock-value",
@@ -126,7 +141,7 @@ function maybeReturnValueMethodCall(
   return (
     node.callee.type === AST_NODE_TYPES.MemberExpression &&
     node.callee.property.type === AST_NODE_TYPES.Identifier &&
-    node.callee.property.name === "returnValue" &&
+    isOneOf(node.callee.property.name, mockMethods) &&
     node.arguments.length === 2
   );
 }
