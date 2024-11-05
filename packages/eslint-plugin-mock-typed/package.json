@@ -5,6 +5,7 @@
   "main": "cjs/index.js",
   "types": "cjs/index.d.ts",
   "scripts": {
+    "clean": "rm -rf cjs package.tgz tsconfig.tsbuildinfo",
     "build": "yarn tsc -b",
     "prepack": "yarn clean && yarn build",
     "lint": "eslint 'src/**/*.ts'",
