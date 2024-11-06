@@ -6,7 +6,7 @@ describe("mock", () => {
   beforeEach(() => {
     const { fn, mocked, isMockFunction } = vi;
     // it's a bliss that vi and jest APIs are compatible
-    global.jest = {
+    (global as any)["jest"] = {
       fn,
       mocked,
       isMockFunction,

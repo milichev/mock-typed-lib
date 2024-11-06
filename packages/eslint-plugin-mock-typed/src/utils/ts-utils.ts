@@ -339,5 +339,5 @@ export function getTypePackage(
     packageJsonCache.set(fileName, packageJson ?? notAPackage);
   }
 
-  return packageJson;
+  return packageJson as PackageJson | undefined;
 }

@@ -11,7 +11,7 @@ See the respective usage descriptions:
 
 ## Testing
 
-Run `yarn test` in the respective package.
+Run `pnpm run test` in the respective package.
 
 ## Contribution
 
@@ -20,7 +20,7 @@ Add your feature or fix and create a Pull Request.
 To bump the version of the packages, run the following terminal command:
 
 ```sh
-VERSION=0.0.7 yarn bump
+VERSION=0.0.7 pnpm run bump
 ```
 
 Where `0.0.7` is the new semver.

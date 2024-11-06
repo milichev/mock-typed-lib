@@ -2,16 +2,13 @@
   "name": "mock-typed-lib",
   "description": "Monorepo for the mock-typed library",
   "private": true,
-  "version": "0.0.10",
+  "version": "0.0.9",
   "main": "index.js",
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "clean": "(find . -name \\*.tgz -delete) && (find . -name tsconfig.tsbuildinfo -delete) && (find . -type d -name 'cjs' -exec rm -rf \\{\\} +)",
-    "build": "yarn workspaces foreach -Apt run build",
-    "bump": "yarn workspaces foreach --all exec \"yarn version $VERSION\"",
-    "prepack": "yarn clean && yarn build"
-  }
+    "clean": "(find . -name \\*.tgz -delete) && (find . -name tsconfig.tsbuildinfo -delete) && (find . -type d -name 'dist' -exec rm -rf \\{\\} +)",
+    "bump": "[[ $VERSION =~ ^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]] && pnpm version -ws --include-workspace-root --no-git-tag-version \"$VERSION\" || echo 'Error: VERSION variable is not set or does not follow semantic versioning (e.g., 1.0.0, 1.2.3-beta)' && exit 1",
+    "prepack": "pnpm run clean && pnpm run build"
+  },
+  "packageManager": "pnpm@9.12.3"
 }

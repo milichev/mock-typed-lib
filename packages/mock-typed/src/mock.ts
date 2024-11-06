@@ -1,3 +1,5 @@
+/// <reference types="jest" preserve="true" />
+
 import type {
   DeepPartial,
   MockInput,

@@ -1,3 +1,7 @@
+/// <reference types="jest" preserve="true" />
+
+import "jest";
+
 type Defined<T> = Exclude<T, undefined>;
 
 /**

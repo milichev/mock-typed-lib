@@ -1,33 +1,9 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "sourceMap": true,
-    "inlineSources": true,
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "lib": ["esnext"],
-    "composite": true,
-    "incremental": true,
-    "declaration": true,
-    "declarationMap": true,
     "rootDir": "src",
-    "baseUrl": ".",
-    "skipLibCheck": true,
-    "outDir": "cjs",
-    "module": "NodeNext",
-    "target": "es6",
-    "exactOptionalPropertyTypes": false,
-    "noUncheckedIndexedAccess": true,
-    "paths": {
-      "mock-typed": ["../mock-typed/src/index.ts"]
-    }
+    "baseUrl": "src",
+    "outDir": "dist"
   },
-  "references": [{ "path": "../mock-typed" }],
-  "include": ["src", "package.json"]
+  "include": ["src"]
 }

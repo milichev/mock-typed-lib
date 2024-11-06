@@ -1,28 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "sourceMap": true,
-    "inlineSources": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "lib": ["esnext"],
-    "composite": true,
-    "incremental": true,
-    "declaration": true,
-    "declarationMap": true,
-    "rootDir": "src",
-    "skipLibCheck": true,
-    "outDir": "cjs",
-    "module": "NodeNext",
-    "target": "es6",
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true
+    "incremental": false,
+    "composite": false,
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "outDir": "./dist"
   },
-  "include": ["src"]
+  "include": ["./src"]
 }

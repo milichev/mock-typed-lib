@@ -1,7 +1,6 @@
 .yarn/*
 node_modules
-cjs
+dist
 *.tgz
 *.tsbuildinfo
-!.yarn/releases
 .DS_Store
