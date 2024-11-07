@@ -1,6 +1,6 @@
 {
   "name": "mock-typed",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A tiny TypeScript library for type-safe function mocks in unit tests",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
