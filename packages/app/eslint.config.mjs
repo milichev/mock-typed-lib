@@ -1,28 +1,56 @@
-import mockTyped from "eslint-plugin-mock-typed";
 import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
+import tseslint from "typescript-eslint";
 
-export default [{
+import { rules } from "eslint-plugin-mock-typed";
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+const tsconfigRootDir = import.meta.dirname;
+
+/**
+ * @type {import("@typescript-eslint/parser").ParserOptions}
+ */
+const parserOptions = {
+  project: "./tsconfig.json",
+  projectService: {
+    defaultProject: `${tsconfigRootDir}/tsconfig.json`,
+    allowDefaultProject: ["*.ts", "*.mjs"],
+  },
+  tsconfigRootDir,
+};
+
+/**
+ * @type {import("eslint").Linter.Config[]}
+ */
+export default [
+  ...tseslint.configs.recommendedTypeChecked,
+
+  {
+    files: ["*.ts"],
+    ignores: ["eslint.config.mjs"],
+  },
+
+  {
     plugins: {
-        "mock-typed": mockTyped,
+      "mock-typed": { rules },
     },
 
     languageOptions: {
-        globals: {
-            ...globals.node,
-        },
+      globals: {
+        ...globals.node,
+      },
 
-        parser: tsParser,
-        ecmaVersion: 5,
-        sourceType: "commonjs",
+      parser: tsParser,
+      ecmaVersion: 2020,
+      sourceType: "module",
 
-        parserOptions: {
-            project: "./tsconfig.json",
-            tsconfigRootDir: "/Users/vmilichev/Dev/github/milichev/mock-typed-lib/packages/app",
-        },
+      parserOptions,
     },
 
     rules: {
-        "mock-typed/my-rule": "error",
+      "mock-typed/my-rule": "warn",
+      "mock-typed/no-any-mock-value": "warn",
     },
-}];
+  },
+];

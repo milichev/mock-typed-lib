@@ -17,13 +17,13 @@ Run `pnpm run test` in the respective package.
 
 Add your feature or fix and create a Pull Request.
 
-To bump the version of the packages, run the following terminal command:
+To bump the version of the packages without committing changes, run the following terminal command:
 
 ```sh
-VERSION=0.0.7 pnpm run bump
+pnpm version 1.2.3 -r --no-commit-hooks --no-git-tag-version -ws --no-workspaces-update
 ```
 
-Where `0.0.7` is the new semver.
+Where `1.2.3` is the new semver.
 
 ## Credits
 

@@ -2,7 +2,7 @@
   "name": "mock-typed-lib",
   "description": "Monorepo for the mock-typed library",
   "private": true,
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -10,5 +10,12 @@
     "bump": "[[ $VERSION =~ ^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]] && pnpm version -ws --include-workspace-root --no-git-tag-version \"$VERSION\" || echo 'Error: VERSION variable is not set or does not follow semantic versioning (e.g., 1.0.0, 1.2.3-beta)' && exit 1",
     "prepack": "pnpm run clean && pnpm run build"
   },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.9.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
   "packageManager": "pnpm@9.12.3"
 }

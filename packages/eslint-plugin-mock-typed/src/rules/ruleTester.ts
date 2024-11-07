@@ -1,11 +1,13 @@
+import path from "node:path";
 import { RuleTester } from "@typescript-eslint/rule-tester";
-import { rootDir } from "../const";
+
+const rootDir = path.resolve(__dirname, "../..");
 
 export const ruleTester = new RuleTester({
   languageOptions: {
     parserOptions: {
-      ecmaVersion: 2021,
-      sourceType: "module",
+      ecmaVersion: 2015,
+      sourceType: "commonjs",
       projectService: {
         defaultProject: `${rootDir}/tsconfig.json`,
         allowDefaultProject: ["*.ts*"],

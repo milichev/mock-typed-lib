@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "outDir": "./dist/types"
+    "noEmit": false,
+    "emitDeclarationOnly": true
   }
 }

@@ -9,7 +9,7 @@ import {
   isOneOf,
   resolveTypeReferences,
 } from "../utils";
-import { mockMethods, mockTypePackageName } from "../const";
+import { mockMethods, mockTypePackageName } from "../utils/const";
 
 type MessageIds = "issue:any-mock-value";
 type Options = [];
@@ -47,12 +47,15 @@ export const rule = createRule<Options, MessageIds>({
           const [decl] = identType?.symbol?.declarations ?? [];
 
           const packageName = getTypePackage(decl)?.name;
-          if (packageName !== mockTypePackageName) return;
+          if (!decl || packageName !== mockTypePackageName) {
+            return;
+          }
 
           methodName =
-            decl &&
-            ts.isArrowFunction(decl) &&
-            ts.isPropertyAssignment(decl.parent)
+            ts.isArrowFunction(decl) && ts.isPropertyAssignment(decl.parent)
+              ? decl.parent.name.getText()
+              : ts.isFunctionTypeNode(decl) &&
+                ts.isPropertySignature(decl.parent)
               ? decl.parent.name.getText()
               : undefined;
         } else if (maybeReturnValueMethodCall(node)) {

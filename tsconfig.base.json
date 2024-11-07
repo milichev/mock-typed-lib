@@ -4,7 +4,6 @@
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["esnext"],
-    "types": ["node", "jest"],
     "outDir": "./dist", // as a precaution to prevent emitting to src
     "composite": true,
     "incremental": true,
