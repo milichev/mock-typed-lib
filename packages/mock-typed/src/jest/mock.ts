@@ -1,5 +1,5 @@
+import type { DeepPartial } from "../types";
 import type {
-  DeepPartial,
   MockInput,
   MockMethods,
   MockParameters,

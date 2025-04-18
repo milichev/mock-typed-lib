@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     globals: true,
     exclude: ["**/dist/**"],
+    include: ["**/*.vitest.ts"],
   },
 });

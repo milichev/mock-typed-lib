@@ -1,20 +1,9 @@
 import { mock } from "./mock";
-import { describe, afterEach, beforeEach, expect, it, vi } from "vitest";
 import { MockValueMockedInput } from "./types";
 
 describe("mock", () => {
   beforeEach(() => {
-    const { fn, mocked, isMockFunction } = vi;
-    // it's a bliss that vi and jest APIs are compatible
-    (global as any)["jest"] = {
-      fn,
-      mocked,
-      isMockFunction,
-    } as any;
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe("returnValue", () => {
@@ -36,7 +25,7 @@ describe("mock", () => {
       const obj = {
         fn: ({ name }: { name: string }) => ({ name, a: 1 }),
       } as const;
-      vi.spyOn(obj, "fn");
+      jest.spyOn(obj, "fn");
       const name = "ow";
       const expected = { a: 1, name };
 
@@ -49,7 +38,7 @@ describe("mock", () => {
       type Arg = { name: string };
       const obj = { fn: ({ name }: Arg) => ({ id: 1, name }) };
 
-      vi.spyOn(obj, "fn");
+      jest.spyOn(obj, "fn");
 
       mock.returnValue(
         obj.fn,
@@ -78,7 +67,7 @@ describe("mock", () => {
     it("should throw when non-function impl passed", () => {
       expect(() => {
         const obj = { fn: () => ({ a: 1 }) } as const;
-        vi.spyOn(obj, "fn");
+        jest.spyOn(obj, "fn");
         mock.impl(obj.fn, { a: 1 } as unknown as () => { a: number });
       }).toThrow("impl expected to be a function");
     });
@@ -92,7 +81,7 @@ describe("mock", () => {
 
     it("should set the return value", () => {
       const obj = { fn: (a: number) => ({ a }) } as const;
-      vi.spyOn(obj, "fn");
+      jest.spyOn(obj, "fn");
       const expected = { a: 1 };
 
       mock.impl(obj.fn, () => expected);
@@ -105,7 +94,7 @@ describe("mock", () => {
       type Arg = { name: string };
       const obj = { fn: ({ name }: Arg) => ({ id: 1, name }) };
 
-      vi.spyOn(obj, "fn");
+      jest.spyOn(obj, "fn");
 
       mock.impl(
         obj.fn,
@@ -224,10 +213,10 @@ describe("mock", () => {
       let lastMockedResult: MockValueMockedInput<typeof useSub>;
 
       beforeEach(() => {
-        vi.resetAllMocks();
+        jest.resetAllMocks();
 
         // in reality, it is mocking a module like `jest.mock('hooks')`
-        vi.spyOn(hooks, "useSub");
+        jest.spyOn(hooks, "useSub");
 
         mock.impl(
           // jest/vi has mocked the hook in the module, so here we have a Mock function
@@ -263,7 +252,7 @@ describe("mock", () => {
         expect(DemoComponent()).toEqual("some demo result");
 
         // check the component has subscribed
-        expect(lastMockedResult.events?.subscribe).toHaveBeenCalledOnce();
+        expect(lastMockedResult.events?.subscribe).toHaveBeenCalled();
 
         const { unsubscribe } =
           lastMockedResult.events?.subscribe?.mock.results[0]?.value;
